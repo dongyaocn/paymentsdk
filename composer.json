@@ -1,0 +1,23 @@
+{
+    "name": "dongyao/paymentsdk",
+    "description": "支付SDK",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "董垚",
+            "email": "dong_yao_cn@163.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "src/Alipay/function/core.php",
+            "src/Alipay/function/rsa.php"
+        ],
+        "psr-4": {
+            "Payment\\": "src/"
+        }
+    }
+}
