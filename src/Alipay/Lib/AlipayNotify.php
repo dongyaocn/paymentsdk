@@ -15,9 +15,6 @@ namespace Payment\Alipay\Lib;
  * 调试通知返回时，可查看或改写log日志的写入TXT里的数据，来检查通知返回是否正常
  */
 
-require_once("alipay_core.function.php");
-require_once("alipay_rsa.function.php");
-
 class AlipayNotify {
     /**
      * HTTPS形式消息验证地址

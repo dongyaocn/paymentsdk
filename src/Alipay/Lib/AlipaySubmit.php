@@ -94,6 +94,12 @@ class AlipaySubmit {
      */
     function buildRequestForm($para_temp, $method, $button_name) {
         //待请求参数数组
+        $para_temp["service"]        = $this->alipay_config['service'];
+        $para_temp["partner"]        = $this->alipay_config['partner'];
+        $para_temp["seller_id"]      = $this->alipay_config['seller_id'];
+        $para_temp["payment_type"]   = $this->alipay_config['payment_type'];
+        $para_temp["_input_charset"] = trim(strtolower($this->alipay_config['input_charset']));
+
         $para = $this->buildRequestPara($para_temp);
 
         $sHtml = "<form target='_blank' id='alipaysubmit' name='alipaysubmit' action='".$this->alipay_gateway_new."_input_charset=".trim(strtolower($this->alipay_config['input_charset']))."' method='".$method."'>";
@@ -109,6 +115,23 @@ class AlipaySubmit {
         return $sHtml;
     }
 
+    /**
+     * 建立请求，以URL形式构造
+     * @param $para_temp 请求参数数组
+     * @return 请求url
+     */
+    function buildRequestUrl($para_temp) {
+        //待请求参数数组
+        $para_temp["service"]        = $this->alipay_config['service'];
+        $para_temp["partner"]        = $this->alipay_config['partner'];
+        $para_temp["seller_id"]      = $this->alipay_config['seller_id'];
+        $para_temp["payment_type"]   = $this->alipay_config['payment_type'];
+        $para_temp["_input_charset"] = trim(strtolower($this->alipay_config['input_charset']));
+
+        $para = $this->buildRequestPara($para_temp);
+
+        return $this->alipay_gateway_new . http_build_query($para);
+    }
 
     /**
      * 用于防钓鱼，调用接口query_timestamp来获取时间戳的处理函数
