@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => $vendorDir . '/symfony/polyfill-mbstring/bootstrap.php',
     '9ce68886be7164af355e803850724da5' => $baseDir . '/src/Alipay/function/core.php',
     '17e7d09763d21cf0ccf76cdbece9ed07' => $baseDir . '/src/Alipay/function/rsa.php',
 );
