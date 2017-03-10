@@ -40,12 +40,71 @@ class Pay {
         $html = '';
         $html .= '<!DOCTYPE html>';
         $html .= '<html>';
-        $html .= '<head><title>京东支付</title></head><body onload="autosubmit()">';
+        $html .= '<head><meta charset="UTF-8"><title>京东支付</title></head><body onload="autosubmit()">';
         $html .= $form_html;
         $html .= '<script>function autosubmit(){document.getElementById("batchForm").submit();}</script>';
         $html .= '</body></html>';
 
         return $html;
+    }
+
+    /**
+     * 使用h5版支付方式
+     * @param  Order  $order [description]
+     * @return [type]        [description]
+     */
+    public function buildRequestFormH5(Order $order)
+    {
+        $action = self::API_PAY_H5;
+        $form_html = "<form action='{$action}' method='post' id='batchForm' >";
+
+        $attrs = $order->all();
+        foreach ($attrs as $key => $value) {
+            $form_html .= "<input type='hidden' name='{$key}' value='{$value}'/><br/>";
+        }
+        $form_html .= '</form>';
+
+        $html = '';
+        $html .= '<!DOCTYPE html>';
+        $html .= '<html>';
+        $html .= '<head><meta charset="UTF-8"><title>京东支付</title></head><body onload="autosubmit()">';
+        $html .= $form_html;
+        $html .= '<script>function autosubmit(){document.getElementById("batchForm").submit();}</script>';
+        $html .= '</body></html>';
+
+        return $html;
+    }
+
+    /**
+     * 获取预支付订单号
+     * @param  Order  $order [description]
+     * @return [type]        [description]
+     */
+    public function getOrderId(Order $order) {
+        $reqXmlStr = Xml::encryptReqXml($order->all());
+
+        $http = new Http();
+        list ($return_code, $return_content) = $http->http_post_data(self::API_PAY_UNIORDER, $reqXmlStr);
+
+        $resData;
+        $flag = Xml::decryptResXml($return_content, $resData);
+        if ($flag) {
+            $this->orderId = $resData['orderId'];
+        }
+
+        return $this->orderId;
+    }
+
+    /**
+     * 获取orderId md5签名值
+     * @return [type] [description]
+     */
+    public function getSignData()
+    {
+        $merchant = Config::get('merchantNum');
+        $merchant = Config::get('md5Key');
+
+        return md5('merchant=' . $merchant . '&orderId=' . $this->orderId . '&key=' . $md5Key);
     }
 
     /**
@@ -109,64 +168,5 @@ class Pay {
     public function getNotify()
     {
         return new Notify();
-    }
-
-    /**
-     * 使用h5版支付方式
-     * @param  Order  $order [description]
-     * @return [type]        [description]
-     */
-    public function buildRequestFormH5(Order $order)
-    {
-        $action = self::API_PAY_H5;
-        $form_html = "<form action='{$action}' method='post' id='batchForm' >";
-
-        $attrs = $order->all();
-        foreach ($attrs as $key => $value) {
-            $form_html .= "<input type='hidden' name='{$key}' value='{$value}'/><br/>";
-        }
-        $form_html .= '</form>';
-
-        $html = '';
-        $html .= '<!DOCTYPE html>';
-        $html .= '<html>';
-        $html .= '<head><title>京东支付</title></head><body onload="autosubmit()">';
-        $html .= $form_html;
-        $html .= '<script>function autosubmit(){document.getElementById("batchForm").submit();}</script>';
-        $html .= '</body></html>';
-
-        return $html;
-    }
-
-    /**
-     * 获取预支付订单号
-     * @param  Order  $order [description]
-     * @return [type]        [description]
-     */
-    public function getOrderId(Order $order) {
-        $reqXmlStr = Xml::encryptReqXml($order->all());
-
-        $http = new Http();
-        list ($return_code, $return_content) = $http->http_post_data(self::API_PAY_UNIORDER, $reqXmlStr);
-
-        $resData;
-        $flag = Xml::decryptResXml($return_content, $resData);
-        if ($flag) {
-            $this->orderId = $resData['orderId'];
-        }
-
-        return $this->orderId;
-    }
-
-    /**
-     * 获取orderId md5签名值
-     * @return [type] [description]
-     */
-    public function getSignData()
-    {
-        $merchant = Config::get('merchantNum');
-        $merchant = Config::get('md5Key');
-
-        return md5('merchant=' . $merchant . '&orderId=' . $this->orderId . '&key=' . $md5Key);
     }
 }
